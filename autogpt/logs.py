@@ -313,11 +313,16 @@ def print_assistant_thoughts(
         assistant_thoughts_criticism = assistant_thoughts.get("criticism")
         assistant_thoughts_speak = assistant_thoughts.get("speak")
     logger.typewriter_log(
-        f"{ai_name.upper()} THOUGHTS:", Fore.YELLOW, f"{assistant_thoughts_text}"
+        f"{ai_name.upper()} " + CFG.prompt.REPLY_THOUGHTS,
+        Fore.YELLOW,
+        f"{assistant_thoughts_text}"
     )
-    logger.typewriter_log("REASONING:", Fore.YELLOW, f"{assistant_thoughts_reasoning}")
+    logger.typewriter_log(
+        CFG.prompt.REPLY_REASONING,
+        Fore.YELLOW,
+        f"{assistant_thoughts_reasoning}")
     if assistant_thoughts_plan:
-        logger.typewriter_log("PLAN:", Fore.YELLOW, "")
+        logger.typewriter_log(CFG.prompt.REPLY_PLAN, Fore.YELLOW, "")
         # If it's a list, join it into a string
         if isinstance(assistant_thoughts_plan, list):
             assistant_thoughts_plan = "\n".join(assistant_thoughts_plan)
