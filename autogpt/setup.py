@@ -13,65 +13,64 @@ def prompt_user() -> AIConfig:
         AIConfig: The AIConfig object containing the user's input
     """
     ai_name = ""
+    from autogpt.config.config import Config
+    cfg = Config()
+
     # Construct the prompt
     logger.typewriter_log(
-        "Welcome to Auto-GPT! ",
+        cfg.prompt.UPROMP_WELCOME,
         Fore.GREEN,
-        "run with '--help' for more information.",
+        cfg.prompt.UPROMP_RUN_WITH_HELP,
         speak_text=True,
     )
 
     logger.typewriter_log(
-        "Create an AI-Assistant:",
+        cfg.prompt.UPROMP_CREATE,
         Fore.GREEN,
-        "Enter the name of your AI and its role below. Entering nothing will load"
-        " defaults.",
+        cfg.prompt.UPROMP_LOADDEF,
         speak_text=True,
     )
 
     # Get AI Name from User
     logger.typewriter_log(
-        "Name your AI: ", Fore.GREEN, "For example, 'Entrepreneur-GPT'"
+        cfg.prompt.UPROMP_NAMEAI, Fore.GREEN, cfg.prompt.UPROMP_NAMECASE
     )
-    ai_name = utils.clean_input("AI Name: ")
+    ai_name = utils.clean_input(cfg.prompt.UPROMP_AINAME)
     if ai_name == "":
-        ai_name = "Entrepreneur-GPT"
+        ai_name = cfg.prompt.UPROMP_DEFNAME
 
     logger.typewriter_log(
-        f"{ai_name} here!", Fore.LIGHTBLUE_EX, "I am at your service.", speak_text=True
+        cfg.prompt.UPROMP_AIHERE.format(ai_name),
+        Fore.LIGHTBLUE_EX,
+        cfg.prompt.UPROMP_READYFORSVS,
+        speak_text=True
     )
 
     # Get AI Role from User
     logger.typewriter_log(
-        "Describe your AI's role: ",
+        cfg.prompt.UPROMP_DESCRIBE_ROLE,
         Fore.GREEN,
-        "For example, 'an AI designed to autonomously develop and run businesses with"
-        " the sole goal of increasing your net worth.'",
+        cfg.prompt.UPROMP_ROLE_EXAMPLE,
     )
-    ai_role = utils.clean_input(f"{ai_name} is: ")
+    ai_role = utils.clean_input(cfg.prompt.UPROMP_AI_IS.format(ai_name))
     if ai_role == "":
-        ai_role = "an AI designed to autonomously develop and run businesses with the"
-        " sole goal of increasing your net worth."
+        ai_role = cfg.prompt.UPROMP_DEFAULT_ROLE
 
     # Enter up to 5 goals for the AI
     logger.typewriter_log(
-        "Enter up to 5 goals for your AI: ",
+        cfg.prompt.UPROMP_ENTER_GOALS,
         Fore.GREEN,
-        "For example: \nIncrease net worth, Grow Twitter Account, Develop and manage"
-        " multiple businesses autonomously'",
+        cfg.prompt.UPROMP_GOAL_EXAMPLES,
     )
-    print("Enter nothing to load defaults, enter nothing when finished.", flush=True)
+    print(cfg.prompt.UPROMP_GOAL_FINISH, flush=True)
     ai_goals = []
     for i in range(5):
-        ai_goal = utils.clean_input(f"{Fore.LIGHTBLUE_EX}Goal{Style.RESET_ALL} {i+1}: ")
+        ai_goal = utils.clean_input(
+            cfg.prompt.UPROMP_GOAL.format(Fore.LIGHTBLUE_EX, Style.RESET_ALL, i+1))
         if ai_goal == "":
             break
         ai_goals.append(ai_goal)
     if not ai_goals:
-        ai_goals = [
-            "Increase net worth",
-            "Grow Twitter Account",
-            "Develop and manage multiple businesses autonomously",
-        ]
+        ai_goals = cfg.prompt.UPROMP_DEFAULT_GOALS
 
     return AIConfig(ai_name, ai_role, ai_goals)

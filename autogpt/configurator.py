@@ -3,7 +3,7 @@ import click
 from colorama import Back, Fore, Style
 
 from autogpt import utils
-from autogpt.config import Config
+from autogpt.config import Config, lang_cn
 from autogpt.logs import logger
 from autogpt.memory import get_supported_memory_backends
 
@@ -23,6 +23,7 @@ def create_config(
     browser_name: str,
     allow_downloads: bool,
     skip_news: bool,
+    cn_prompt: bool,
 ) -> None:
     """Updates the config object with the given arguments.
 
@@ -132,3 +133,9 @@ def create_config(
 
     if browser_name:
         CFG.selenium_web_browser = browser_name
+
+    if cn_prompt:
+        CFG.cn_prompt = True
+        CFG.prompt = lang_cn
+        # it's hard to get news in mainland China
+        CFG.skip_news = True

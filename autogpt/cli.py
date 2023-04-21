@@ -47,6 +47,11 @@ import click
     is_flag=True,
     help="Specifies whether to suppress the output of latest news on startup.",
 )
+@click.option(
+    "--cn-prompt",
+    is_flag=True,
+    help="Specifies whether to use Chinese prompt for user (not for gpt).",
+)
 @click.pass_context
 def main(
     ctx: click.Context,
@@ -62,6 +67,7 @@ def main(
     browser_name: str,
     allow_downloads: bool,
     skip_news: bool,
+    cn_prompt: bool,
 ) -> None:
     """
     Welcome to AutoGPT an experimental open-source application showcasing the capabilities of the GPT-4 pushing the boundaries of AI.
@@ -98,6 +104,7 @@ def main(
             browser_name,
             allow_downloads,
             skip_news,
+            cn_prompt,
         )
         logger.set_level(logging.DEBUG if cfg.debug_mode else logging.INFO)
         ai_name = ""
@@ -119,17 +126,15 @@ def main(
         full_message_history = []
         next_action_count = 0
         # Make a constant:
-        triggering_prompt = (
-            "Determine which next command to use, and respond using the"
-            " format specified above:"
-        )
+        triggering_prompt = "Determine which next command to use, " \
+                            "and respond using the json format specified above:"
         # Initialize memory and make sure it is empty.
         # this is particularly important for indexing and referencing pinecone memory
         memory = get_memory(cfg, init=True)
         logger.typewriter_log(
-            "Using memory of type:", Fore.GREEN, f"{memory.__class__.__name__}"
+            cfg.prompt.MEM_TYPE, Fore.GREEN, f"{memory.__class__.__name__}"
         )
-        logger.typewriter_log("Using Browser:", Fore.GREEN, cfg.selenium_web_browser)
+        logger.typewriter_log(cfg.prompt.BROWSER_TYPE, Fore.GREEN, cfg.selenium_web_browser)
         agent = Agent(
             ai_name=ai_name,
             memory=memory,

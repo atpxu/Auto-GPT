@@ -173,22 +173,22 @@ def construct_prompt() -> str:
     """
     config = AIConfig.load(CFG.ai_settings_file)
     if CFG.skip_reprompt and config.ai_name:
-        logger.typewriter_log("Name :", Fore.GREEN, config.ai_name)
-        logger.typewriter_log("Role :", Fore.GREEN, config.ai_role)
-        logger.typewriter_log("Goals:", Fore.GREEN, f"{config.ai_goals}")
+        logger.typewriter_log(CFG.prompt.HINT_NAME, Fore.GREEN, config.ai_name)
+        logger.typewriter_log(CFG.prompt.HINT_ROLE, Fore.GREEN, config.ai_role)
+        logger.typewriter_log(CFG.prompt.HINT_GOALS, Fore.GREEN, f"{config.ai_goals}")
     elif config.ai_name:
         logger.typewriter_log(
-            "Welcome back! ",
+            CFG.prompt.HINT_WELCOME,
             Fore.GREEN,
-            f"Would you like me to return to being {config.ai_name}?",
+            CFG.prompt.HINT_WCQST.format(config.ai_name),
             speak_text=True,
         )
         should_continue = clean_input(
-            f"""Continue with the last settings?
-Name:  {config.ai_name}
-Role:  {config.ai_role}
-Goals: {config.ai_goals}
-Continue (y/n): """
+            CFG.prompt.HINT_SHOULD_CONTINUE.format(
+                config.ai_name,
+                config.ai_role,
+                config.ai_goals
+            )
         )
         if should_continue.lower() == "n":
             config = AIConfig()

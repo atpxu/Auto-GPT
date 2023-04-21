@@ -66,12 +66,12 @@ class Agent:
                 and loop_count > cfg.continuous_limit
             ):
                 logger.typewriter_log(
-                    "Continuous Limit Reached: ", Fore.YELLOW, f"{cfg.continuous_limit}"
+                    cfg.prompt.HINT_LIMIT_REACHED, Fore.YELLOW, f"{cfg.continuous_limit}"
                 )
                 break
 
             # Send message to AI, get response
-            with Spinner("Thinking... "):
+            with Spinner(cfg.prompt.HINT_THINKING):
                 assistant_reply = chat_with_ai(
                     self.system_prompt,
                     self.triggering_prompt,
@@ -100,20 +100,18 @@ class Agent:
                 # Get key press: Prompt the user to press enter to continue or escape
                 # to exit
                 logger.typewriter_log(
-                    "NEXT ACTION: ",
+                    cfg.prompt.HINT_NEXT_ACTION,
                     Fore.CYAN,
                     f"COMMAND = {Fore.CYAN}{command_name}{Style.RESET_ALL}  "
                     f"ARGUMENTS = {Fore.CYAN}{arguments}{Style.RESET_ALL}",
                 )
                 print(
-                    "Enter 'y' to authorise command, 'y -N' to run N continuous "
-                    "commands, 'n' to exit program, or enter feedback for "
-                    f"{self.ai_name}...",
+                    cfg.prompt.HINT_NEED_AUTH + f"{self.ai_name}...",
                     flush=True,
                 )
                 while True:
                     console_input = clean_input(
-                        Fore.MAGENTA + "Input:" + Style.RESET_ALL
+                        Fore.MAGENTA + cfg.prompt.HINT_INPUT + Style.RESET_ALL
                     )
                     if console_input.lower().strip() == "y":
                         user_input = "GENERATE NEXT COMMAND JSON"
@@ -128,10 +126,7 @@ class Agent:
                             )
                             user_input = "GENERATE NEXT COMMAND JSON"
                         except ValueError:
-                            print(
-                                "Invalid input format. Please enter 'y -n' where n is"
-                                " the number of continuous tasks."
-                            )
+                            print(cfg.prompt.HINT_INVALID_INPUT)
                             continue
                         break
                     elif console_input.lower() == "n":
@@ -144,17 +139,17 @@ class Agent:
 
                 if user_input == "GENERATE NEXT COMMAND JSON":
                     logger.typewriter_log(
-                        "-=-=-=-=-=-=-= COMMAND AUTHORISED BY USER -=-=-=-=-=-=-=",
+                        cfg.prompt.HINT_AUTHORISED,
                         Fore.MAGENTA,
                         "",
                     )
                 elif user_input == "EXIT":
-                    print("Exiting...", flush=True)
+                    print(cfg.prompt.HINT_EXITING, flush=True)
                     break
             else:
                 # Print command
                 logger.typewriter_log(
-                    "NEXT ACTION: ",
+                    cfg.prompt.HINT_NEXT_ACTION,
                     Fore.CYAN,
                     f"COMMAND = {Fore.CYAN}{command_name}{Style.RESET_ALL}"
                     f"  ARGUMENTS = {Fore.CYAN}{arguments}{Style.RESET_ALL}",
@@ -193,5 +188,5 @@ class Agent:
                     create_chat_message("system", "Unable to execute command")
                 )
                 logger.typewriter_log(
-                    "SYSTEM: ", Fore.YELLOW, "Unable to execute command"
+                    cfg.prompt.HINT_SYSTEM, Fore.YELLOW, cfg.prompt.HINT_UNABLE_EXECUTE
                 )

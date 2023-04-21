@@ -125,7 +125,7 @@ class PromptGenerator:
             str: The generated prompt string.
         """
         formatted_response_format = json.dumps(self.response_format, indent=4)
-        return (
+        ret = (
             f"Constraints:\n{self._generate_numbered_list(self.constraints)}\n\n"
             "Commands:\n"
             f"{self._generate_numbered_list(self.commands, item_type='command')}\n\n"
@@ -136,3 +136,8 @@ class PromptGenerator:
             f" Format: \n{formatted_response_format} \nEnsure the response can be"
             " parsed by Python json.loads"
         )
+        from autogpt.config import Config
+        cfg = Config()
+        if cfg.cn_prompt:
+            ret += "\nAll the text values in json response \"thoughts\" should be in Chinese"
+        return ret
